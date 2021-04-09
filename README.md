@@ -1,10 +1,12 @@
 # STM32
 Repository that contains code for STM32 devices. 
-Unless other stated the folders, are projects to be opened with [SW4STM32](https://www.openstm32.org/HomePage)
+Unless stated otherwise, the folders are projects to be opened with [SW4STM32](https://www.openstm32.org/HomePage)
 
 ## [STM32F412G_Disco_CDC_RNDIS_lwIP](STM32F412G_Disco_CDC_RNDIS_lwIP)
 ### Description
-Is an example implementation of a USB CDC [Remote NDIS (RNDIS)](https://docs.microsoft.com/en-us/windows-hardware/drivers/network/overview-of-remote-ndis--rndis-) device. The application will be registered as a **R**emote **N**etwork **D**river **I**nterface **S**pecification ( [RNDIS](https://en.wikipedia.org/wiki/RNDIS) ) device. The project also contains a very simple [DHCP](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol) server implementation that assignes automatically an IP address to the 'virtual' network device exposed to the host (computer). The network stack is implemented via [lwIP](https://savannah.nongnu.org/projects/lwip/) version 2.1.2. lwIP is configured through the file [lwipopts.h](STM32F412G_Disco_CDC_RNDIS_lwIP/inc/lwipopts.h). Only IPv4 and UDP are enabled.
+The project runs on a [STM32F412G-DISCO](https://www.st.com/en/evaluation-tools/32f412gdiscovery.html) board. 
+This project is an example implementation of an USB CDC [Remote NDIS (RNDIS)](https://docs.microsoft.com/en-us/windows-hardware/drivers/network/overview-of-remote-ndis--rndis-) device. After being connected to a host (e.g. PC) the device a **R**emote **N**etwork **D**river **I**nterface **S**pecification ( [RNDIS](https://en.wikipedia.org/wiki/RNDIS) ) device. 
+The project also contains a very simple [DHCP](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol) server implementation that assignes automatically an IP address to the 'virtual' network device exposed to the host (computer). The network stack is implemented via [lwIP](https://savannah.nongnu.org/projects/lwip/) version 2.1.2. lwIP is configured through the file [lwipopts.h](STM32F412G_Disco_CDC_RNDIS_lwIP/inc/lwipopts.h). Only IPv4 and UDP are enabled.
 
 ### Application
 The application initializes the 
