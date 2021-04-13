@@ -81,6 +81,17 @@ typedef struct {
 	uint8_t  			iInterface;
 }_ATTR_PACKED USBInterfaceDescriptor_t;
 
+typedef struct {
+	uint8_t				bLength;
+	uint8_t				bHIDDescriptorType;
+	uint16_t			bcdHID;
+	uint8_t				bCountryCode;
+	uint8_t				bNumDescriptors;
+	uint8_t				bClassDescriptorType;
+	uint16_t			wDescriptorLength;
+}_ATTR_PACKED USBHIDDescriptor_t;
+
+
 // see: https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/usbspec/ns-usbspec-_usb_endpoint_descriptor
 typedef struct  {
 	uint8_t  			bLength;

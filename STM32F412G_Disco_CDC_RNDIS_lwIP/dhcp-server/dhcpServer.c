@@ -84,9 +84,6 @@ static void dhcpSrvProc(void *arg, struct udp_pcb *upcb, struct pbuf *p, const i
 		return;
 	}
 
-	uint8_t l_tempBuf[DHCP_MAX_MSG_SIZE];
-	memcpy(l_tempBuf,p->payload,p->len);
-
 	uint32_t optLen = p->len - sizeof(DHCP_TYPE);
 
 	dhcp_data = (DHCP_TYPE*)p->payload;
@@ -206,7 +203,7 @@ void dhcpSrvHandleDiscover(struct udp_pcb *upcb,u16_t port,DHCP_TYPE* dhcp_data,
 	dhcpSrvClearOptions(dhcp_data, optLen);
 	replyMsgType 	= DHCP_MESSAGE_TYPE_OFFER;
 	dhcpSrvAddOption(dhcp_data, DHCP_OPT_DHCP_MESSAGE_TYPE, 	1, &replyMsgType, 				optLen);
-	dhcpSrvAddOption(dhcp_data, DHCP_OPT_SERVER_IDENTIFIER, 	4, dhcpConfig->addr.addr_a, 		optLen);
+	dhcpSrvAddOption(dhcp_data, DHCP_OPT_SERVER_IDENTIFIER, 	4, dhcpConfig->addr.addr_a, 	optLen);
 	dhcpSrvAddOption(dhcp_data, DHCP_OPT_IP_ADDRESS_LEASE_TIME, 4, (uint8_t*) &(entry->lease), 	optLen);
 	dhcpSrvAddOption(dhcp_data, DHCP_OPT_SUBNET_MASK, 			4, entry->subnet.addr_a,		optLen);
 	dhcpSrvAddOption(dhcp_data, DHCP_OPT_END, 					0, NULL, 						optLen);
@@ -313,6 +310,7 @@ void dhcpSrvSendReply(struct udp_pcb *upcb, u16_t port, DHCP_TYPE* dhcp_data, ui
 DhcpOption_t* dhcpSrvGetOption(DHCP_TYPE* dhcp,DhcpOptionCode opCode, uint32_t optLen) {
 	DhcpOption_t* opt = NULL;
 	for(int i = 0; i < optLen; ) {
+
 		opt = (DhcpOption_t*)(dhcp->options + i);
 
 		if(opt->code == DHCP_OPT_PAD) {
@@ -363,28 +361,45 @@ int dhcpSrvGetOptionLength(DHCP_TYPE* dhcp, uint32_t optMaxLen) {
 bool dhcpSrvAddOption(DHCP_TYPE* dhcp,DhcpOptionCode opCode, uint32_t optLen, uint8_t* optValues, uint32_t optTotalLen) {
 
 	DhcpOption_t* opt = NULL;
-	bool success = false;
-	for(int i = 0; i < optTotalLen; ) {
 
-		opt = (DhcpOption_t*)(dhcp->options + i);
-		if((opt->code != DHCP_OPT_PAD) && (opt->code != DHCP_OPT_END)) {
+	bool success = false;
+
+	for (int i = 0; i < optTotalLen;) {
+
+		opt = (DhcpOption_t*) (dhcp->options + i);
+
+		// jump over all options except END and PAD
+		if ((opt->code != DHCP_OPT_END) && (opt->code != DHCP_OPT_PAD)) {
 			i += 1 + 1 + opt->length;
 			continue;
 		}
 
-		// see if there is enough space in the option buffer...
-		if((i + 1 + 1 + optLen ) > optTotalLen) {
+		if ((opt->code == DHCP_OPT_PAD) || (opt->code == DHCP_OPT_END)) {
+			// we found the next viable spot...
+
+			// check that it actually fits into the given buffer
+			if ((i + 1 + optLen) < optTotalLen) {
+				opt->code = opCode;
+				// we only have to write length/data if the new opCode is != END
+				if (opCode != DHCP_OPT_END) {
+
+					opt->length = optLen;
+
+					memcpy(opt->value, optValues, optLen);
+				}
+
+				success = true;
+
+				// we are done here.
+				break;
+			} else {
+				// error --> not enough space
+				break;
+			}
+		} else {
+			// error --> should not be possible...
 			break;
 		}
-
-		// there seems to be enough space AND we have found an empty spot...
-		// --> add the option.
-		opt->code = opCode;
-		if(opCode != DHCP_OPT_END) {
-			opt->length = optLen;
-			memcpy(opt->value,optValues,optLen);
-		}
-		success = true;
 
 	}
 

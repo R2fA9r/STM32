@@ -42,7 +42,7 @@ uint8_t *USBD_Class_USRStringDesc (USBD_SpeedTypeDef speed, uint8_t idx, uint16_
 #endif /* USB_SUPPORT_USER_STRING_DESC */
 
 /* Private variables ---------------------------------------------------------*/
-USBD_DescriptorsTypeDef CDC_Desc = {
+USBD_DescriptorsTypeDef USBD_Class_Desc = {
   USBD_Class_DeviceDescriptor,
   USBD_Class_LangIDStrDescriptor,
   USBD_Class_ManufacturerStrDescriptor,
@@ -57,22 +57,7 @@ USBD_DescriptorsTypeDef CDC_Desc = {
   #pragma data_alignment=4
 #endif
 
-USBDeviceDescriptor_t USBD_DeviceDesc = {
-		sizeof(USBDeviceDescriptor_t),
-		USB_DESC_TYPE_DEVICE,
-		0x0200,
-		USB_DEVICE_CLASS_CDC,
-		USB_DEVICE_SUBCLASS_CDC,
-		USB_DEVICE_PROTOCOL_CDC,
-		USB_MAX_EP0_SIZE,
-		USBD_VID,
-		USBD_PID,
-		0x0200,
-		USBD_IDX_MFC_STR,
-		USBD_IDX_PRODUCT_STR,
-		USBD_IDX_SERIAL_STR,
-		USBD_MAX_NUM_CONFIGURATION
-};
+extern USBDeviceDescriptor_t USBD_DeviceDesc;
 
 
 /* USB Standard Device Descriptor */

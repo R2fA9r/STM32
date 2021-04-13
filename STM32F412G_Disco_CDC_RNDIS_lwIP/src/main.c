@@ -52,10 +52,10 @@ void link_up() {
 void link_down() {
 	netif_set_link_down(&gNetif);
 }
-
-void data_received() {
-	ethernetif_input(&gNetif);
-}
+//
+//void data_received() {
+//	ethernetif_input(&gNetif);
+//}
 
 int main(void) {
 	/* STM32F412xx HAL library initialization */
@@ -75,7 +75,7 @@ int main(void) {
 
 
 	/* Init Device Library */
-	USBD_Init(&USBD_Device, &CDC_Desc, 0);
+	USBD_Init(&USBD_Device, &USBD_Class_Desc, 0);
 	USBD_RegisterClass(&USBD_Device, USBD_CDC_RNDIS_CLASS);
 	USBD_CDC_RNDIS_RegisterInterface(&USBD_Device, &USBD_CDC_RNDIS_fops);
 
